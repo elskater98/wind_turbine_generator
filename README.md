@@ -18,7 +18,7 @@
 - ESP-01 -> 3.3 V
 - Protoboard 
 - LCD Display
-- Acelerometer (ADXL345) -> 3.3 V
+- Accelerometer (ADXL345) -> 3.3 V
 - VCC Protoboard adapter (3.3V, 5V)
 - ESP Programmer module
 - Wires
