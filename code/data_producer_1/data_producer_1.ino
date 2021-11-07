@@ -12,6 +12,9 @@
 #include <Adafruit_Sensor.h>
 #include <DHT.h>
 
+#include <SparkFunSerialGraphicLCD.h>//inculde the Serial Graphic LCD library
+#include <SoftwareSerial.h>
+
 // Replace with your network credentials
 const char* ssid = "ADAMO-C6CA";
 const char* password = "JA54W6HGFCV7NC";
@@ -31,6 +34,8 @@ float h = 0.0;
 
 // Create AsyncWebServer object on port 80
 AsyncWebServer server(80);
+
+LCD LCD;
 
 // Generally, you should use "unsigned long" for variables that hold time
 // The value will quickly become too large for an int to store
@@ -142,6 +147,13 @@ void setup(){
 
   // Start server
   server.begin();
+
+  // LCD
+  LCD.setHome();//set the cursor back to 0,0.
+  LCD.clearScreen();//clear anything that may have been previously printed ot the screen.
+  delay(10);
+  
+  LCD.printStr("Commence Arduino Demo Mode");
 }
  
 void loop(){  
