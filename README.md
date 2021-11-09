@@ -11,7 +11,6 @@
 - VCC Protoboard adapter (3.3V, 5V)
 - ESP Programmer module
 - Wires
-- 4.7K Resistor
 
 ## Data Producer 2
 ### Material
