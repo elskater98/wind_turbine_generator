@@ -1,8 +1,3 @@
-/*********
-  Rui Santos
-  Complete project details at https://randomnerdtutorials.com/esp8266-dht11dht22-temperature-and-humidity-web-server-with-arduino-ide/
-*********/
-
 // Import required libraries
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
@@ -12,7 +7,6 @@
 #include <Adafruit_Sensor.h>
 #include <DHT.h>
 
-#include <SparkFunSerialGraphicLCD.h>//inculde the Serial Graphic LCD library
 #include <SoftwareSerial.h>
 
 // Replace with your network credentials
@@ -23,8 +17,6 @@ const char* password = "JA54W6HGFCV7NC";
 
 // Uncomment the type of sensor in use:
 #define DHTTYPE    DHT11     // DHT 11
-//#define DHTTYPE    DHT22     // DHT 22 (AM2302)
-//#define DHTTYPE    DHT21     // DHT 21 (AM2301)
 
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -34,8 +26,6 @@ float h = 0.0;
 
 // Create AsyncWebServer object on port 80
 AsyncWebServer server(80);
-
-LCD LCD;
 
 // Generally, you should use "unsigned long" for variables that hold time
 // The value will quickly become too large for an int to store
@@ -92,7 +82,6 @@ setInterval(function ( ) {
   xhttp.open("GET", "/temperature", true);
   xhttp.send();
 }, 10000 ) ;
-
 setInterval(function ( ) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
@@ -147,13 +136,8 @@ void setup(){
 
   // Start server
   server.begin();
-
-  // LCD
-  LCD.setHome();//set the cursor back to 0,0.
-  LCD.clearScreen();//clear anything that may have been previously printed ot the screen.
-  delay(10);
   
-  LCD.printStr("Commence Arduino Demo Mode");
+  delay(10);
 }
  
 void loop(){  
@@ -161,18 +145,18 @@ void loop(){
   if (currentMillis - previousMillis >= interval) {
     // save the last time you updated the DHT values
     previousMillis = currentMillis;
-    // Read temperature as Celsius (the default)
+    
     float newT = dht.readTemperature();
-    // Read temperature as Fahrenheit (isFahrenheit = true)
-    //float newT = dht.readTemperature(true);
-    // if temperature read failed, don't change t value
+
     if (isnan(newT)) {
       Serial.println("Failed to read from DHT sensor!");
     }
     else {
       t = newT;
-      Serial.println(t);
+      String outStringT = (String) t+"C";
+      Serial.println(outStringT);
     }
+    
     // Read Humidity
     float newH = dht.readHumidity();
     // if humidity read failed, don't change h value 
@@ -181,7 +165,8 @@ void loop(){
     }
     else {
       h = newH;
-      Serial.println(h);
+      String outStringH = (String) h+"%"; 
+      Serial.println(outStringH);
     }
   }
 }
