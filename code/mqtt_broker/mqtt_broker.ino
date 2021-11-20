@@ -45,9 +45,9 @@ void setup(){
   //Serial.println("Starting MQTT broker");
   myBroker.init();
   myBroker.subscribe("#"); // all topics
-  myBroker.subscribe("/temperature"); // all topics
-  myBroker.subscribe("/humidity"); // all topics
-  myBroker.subscribe("/acceleration"); // all topics
+  myBroker.subscribe("/temperature");
+  myBroker.subscribe("/humidity");
+  myBroker.subscribe("/acceleration");
 }
 
 void loop(){
@@ -62,8 +62,14 @@ void loop(){
 
   // Check if we have clients
   if(myBroker.getClientCount() > 0){
-     mcp.digitalWrite(0, HIGH);
+      for(int i=0; i < myBroker.getClientCount();i++){
+      if(i<8){
+        mcp.digitalWrite(i, HIGH);
+      }
+     }
   }else{
-     mcp.digitalWrite(0, LOW);
+    for(int i = 0; i < 8 ;i++){
+      mcp.digitalWrite(i, LOW);
+    }
   } 
 }
