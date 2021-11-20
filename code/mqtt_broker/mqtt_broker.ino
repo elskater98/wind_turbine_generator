@@ -6,6 +6,10 @@
 #include <Wire.h>
 #include <Adafruit_MCP23017.h>
 
+// MQTT Broker
+#include "uMQTTBroker.h"
+uMQTTBroker myBroker;
+
 // Replace with your network credentials
 const char* ssid = "ADAMO-C6CA";
 const char* password = "JA54W6HGFCV7NC";
@@ -13,6 +17,7 @@ const char* password = "JA54W6HGFCV7NC";
 // Instance of MCP23017 library
 Adafruit_MCP23017 mcp;
 
+int counter = 0;
 void setup(){
 
   Serial.begin(115200);
@@ -32,58 +37,33 @@ void setup(){
   //MCP
   mcp.begin(); //0x20
   
-  //Red
-  mcp.pinMode(7, OUTPUT);
-  mcp.pinMode(6, OUTPUT);
-  mcp.pinMode(5, OUTPUT);
-  mcp.pinMode(4, OUTPUT);
-  // Yellow
-  mcp.pinMode(3, OUTPUT);
-  mcp.pinMode(2, OUTPUT);
-  mcp.pinMode(1, OUTPUT);
-
-  // Green
-  mcp.pinMode(0, OUTPUT);
+  // Init LED (RED = [7,4], Yellow = [3,1], Green=[0])
+  for(int i=0; i<8;i++){
+     mcp.pinMode(i, OUTPUT);
+  }
   
+  //Serial.println("Starting MQTT broker");
+  myBroker.init();
+  myBroker.subscribe("#"); // all topics
+  myBroker.subscribe("/temperature"); // all topics
+  myBroker.subscribe("/humidity"); // all topics
+  myBroker.subscribe("/acceleration"); // all topics
 }
 
 void loop(){
-  Serial.println("Switch LED on");
-  
-  // red
-  mcp.digitalWrite(7, HIGH);
-  mcp.digitalWrite(6, HIGH);
-  mcp.digitalWrite(5, HIGH);
-  mcp.digitalWrite(4, HIGH);
-  delay(1000);
 
-  // yellow
-  mcp.digitalWrite(3, HIGH);
-  mcp.digitalWrite(2, HIGH);
-  mcp.digitalWrite(1, HIGH);
-  delay(2000);
-
-  // green
-  mcp.digitalWrite(0, HIGH);
-  delay(3000);
+  delay(5000); // 5 seconds
   
+  myBroker.publish("broker/connections", (String)myBroker.getClientCount());
   
-  
-  // red
-  Serial.println("Switch LED off");
-  mcp.digitalWrite(7, LOW);
-  mcp.digitalWrite(6, LOW);
-  mcp.digitalWrite(5, LOW);
-  mcp.digitalWrite(4, LOW);
-  delay(2000);
+ // MQTT Broker LED BAR
+ 
+  Serial.println((String)"Current Clients: " + myBroker.getClientCount());
 
-  // yellow
-  mcp.digitalWrite(3, LOW);
-  mcp.digitalWrite(2, LOW);
-  delay(1000);
-
-  // green
-  mcp.digitalWrite(1, LOW);
-  mcp.digitalWrite(0, LOW);
-    
+  // Check if we have clients
+  if(myBroker.getClientCount() > 0){
+     mcp.digitalWrite(0, HIGH);
+  }else{
+     mcp.digitalWrite(0, LOW);
+  } 
 }
