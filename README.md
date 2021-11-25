@@ -46,3 +46,12 @@ This repository takes part of the subject Ubiquitous Computing and Embedded syst
 - Wires
 - I2C – LCD Adapter
 
+## MQTT Broker
+### Material
+- NodeMCU
+- Breadboard
+- MCP23017
+- Wires
+- Segment LED Bar
+- I2C Bus
+
