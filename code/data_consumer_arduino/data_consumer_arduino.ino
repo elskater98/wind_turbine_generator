@@ -3,7 +3,7 @@
 #define I2C_ADDR 0x04
 
 // variables
-uint8_t data[2]; // temp, hum
+int data[2]; // temp, hum
 
 float temp = 0.0;
 float hum = 0.0;
@@ -13,11 +13,11 @@ void reciveDataHandler(){
 }
 
 void sendDataHandler(){
-   data[0]=temp; //temp
-   data[1]=hum; //hum
+   data[0] = random(1,30);; //temp
+   data[1] = random(1,30);; //hum
 
    for(int i=0;i<2;i++){
-     Wire.write((uint8_t)data[i]);
+     Wire.write(data[i]);
    }
 }
 
@@ -31,6 +31,7 @@ void setup() {
 
   // Send Data To Raspberry Pi
   Wire.onRequest(sendDataHandler);
+  delay(100);
 }
 
 void loop() {
@@ -38,7 +39,5 @@ void loop() {
   Serial.println(temp);
   hum = random(1,30);
   Serial.println(hum);
-  delay(500);
-  // put your main code here, to run repeatedly:
-  
+  delay(1000);
 }
