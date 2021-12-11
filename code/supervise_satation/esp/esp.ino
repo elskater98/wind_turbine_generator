@@ -14,17 +14,37 @@ const char* mqtt_server = "192.168.1.163"; // change
 // Wi-Fi
 const char* ssid = "ADAMO-C6CA";
 const char* password = "JA54W6HGFCV7NC";
-String response;
+
+// Data
+char temp[32];
+char hum[32];
+char acc[32];
 
 void callback(char* topic, byte* payload, unsigned int length) {
-  Serial.print("Message arrived [");
-  Serial.print(topic);
-  Serial.print("] ");
-  
-  for (int i=0;i<length;i++) {
-    Serial.print((char)payload[i]); // Gather data from broker
+
+  // Temperature /temperature
+  if((char)topic[1] == 't'){
+            for (int i = 0; i < 5; i++) {
+          temp[i] = (char)payload[i];
+      }
+      temp[5]='t';
   }
-  Serial.println();
+
+  // Humidity
+   if((char)topic[1] == 'h'){
+            for (int i = 0; i < 5; i++) {
+          hum[i] = (char)payload[i];
+      }
+      hum[5]='h';
+   }
+  // Acceleration 
+  if((char)topic[1] == 'a'){
+            for (int i = 0; i < 6; i++) {
+        acc[i] = (char)payload[i];
+    }
+    acc[6]='a';
+  }
+  
 }
 
 void reconnect() {
@@ -54,8 +74,9 @@ void reconnect() {
 void setup() {
   
   Serial.begin(115200);
-  
-  /*WiFi.mode(WIFI_STA);
+
+  // WI-FI
+  WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED) {
@@ -63,25 +84,30 @@ void setup() {
     Serial.print(".");
   }
   
-  Serial.println(WiFi.localIP());*/
-  
-  /*client.setServer(mqtt_server, 1883);
+  Serial.println(WiFi.localIP());
+
+  // MQTT Subscribe
+  client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
-  client.subscribe("#");*/
+  client.subscribe("/temperature");
+  client.subscribe("/humidity");
+  client.subscribe("/acceleration");
   
 }
 
 void loop() {
 
-   if(Serial.available() > 0){
-    response="Response Data";
-    Serial.write("R");
-   }
-   
-  /*if (!client.connected()) {
+  // MQTT Connection
+   if (!client.connected()) {
     reconnect();
   }
-  client.loop();*/
-  
-  delay(1000);
+  client.loop();
+
+  // Response request to Arduino
+   if(Serial.available() > 0){
+    Serial.write(temp);
+    Serial.write(hum);
+    Serial.write(acc);
+   }
+  delay(4000);
 }
