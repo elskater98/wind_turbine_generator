@@ -1,24 +1,28 @@
+//Libraries
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
+// Constants
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-unsigned long lastMsg = 0;
+// MQTT
 #define MSG_BUFFER_SIZE  (50)
 char msg[MSG_BUFFER_SIZE];
-int value = 0;
+const char* mqtt_server = "192.168.1.163"; // change
 
+// Wi-Fi
 const char* ssid = "ADAMO-C6CA";
 const char* password = "JA54W6HGFCV7NC";
-const char* mqtt_server = "192.168.1.163"; // change
+String response;
 
 void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived [");
   Serial.print(topic);
   Serial.print("] ");
+  
   for (int i=0;i<length;i++) {
-    Serial.print((char)payload[i]);
+    Serial.print((char)payload[i]); // Gather data from broker
   }
   Serial.println();
 }
@@ -48,9 +52,10 @@ void reconnect() {
 }
 
 void setup() {
+  
   Serial.begin(115200);
-
-  WiFi.mode(WIFI_STA);
+  
+  /*WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED) {
@@ -58,19 +63,25 @@ void setup() {
     Serial.print(".");
   }
   
-  Serial.println(WiFi.localIP());
+  Serial.println(WiFi.localIP());*/
   
-  client.setServer(mqtt_server, 1883);
+  /*client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
+  client.subscribe("#");*/
   
 }
 
 void loop() {
-  if (!client.connected()) {
+
+   if(Serial.available() > 0){
+    response="Response Data";
+    Serial.write("R");
+   }
+   
+  /*if (!client.connected()) {
     reconnect();
   }
-    
-  client.loop();
-  client.subscribe("#");
-  delay(5000);
+  client.loop();*/
+  
+  delay(1000);
 }
