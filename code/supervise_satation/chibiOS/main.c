@@ -3,11 +3,9 @@
 #include "chprintf.h"
 
 static const uint8_t i2c_address = 0x04;
+static uint8_t result = 0;
 
-BSEMAPHORE_DECL(smph, 0);
-
-int temperature = 0;
-int humidity = 0;
+MUTEX_DECL(mtx1);
 
 void lcdPrintf(int x, int y, char text[], int value)
 {
@@ -37,7 +35,6 @@ static msg_t Thread_LCD(void *p)
 {
   (void)p;
   chRegSetThreadName("SerialPrint");
-  uint16_t iteration = 0;
   while (TRUE)
   {
     sdPut(&SD1, (uint8_t)0x7C);
@@ -51,7 +48,6 @@ static msg_t Thread_LCD(void *p)
     chThdSleepMilliseconds(10);
 
     //chprintf((BaseSequentialStream *)&SD1, "Iter.: %u", iteration);
-    iteration++;
     chThdSleepMilliseconds(2000);
   }
   return 0;
@@ -63,7 +59,8 @@ static msg_t Thread_I2C(void *p)
   (void)p;
 
   chRegSetThreadName("SerialPrintI2C");
-  uint8_t result[] = {0, 0};
+
+  uint8_t request = 0;
   msg_t status;
 
   // Some time to allow slaves initialization
@@ -73,13 +70,28 @@ static msg_t Thread_I2C(void *p)
   {
 
     // Request values
-    i2cMasterReceiveTimeout(
-        &I2C0, i2c_address, result, 2, MS2ST(1000));
+    //msg_t i2cMsg = i2cMasterReceiveTimeout(&I2C0, i2c_address, result, 1, MS2ST(1000));
+    chMtxLock(&mtx1);
+    msg_t i2cMsg = i2cMasterTransmitTimeout(&I2C0, i2c_address, &request, 1, &result, 1, MS2ST(1000));
+    chThdSleepMilliseconds(10);
+    chMtxUnlock();
+    
+    lcdPrintf(30, 8, "%u", request);
+    lcdPrintf(59, 8, "%u", result);
 
-    lcdPrintf(30, 8, "%u", result[1]);
-    lcdPrintf(59, 8, "%u", 16);
+    /*if (i2cMsg == Q_OK)
+    {
+      //lcdPrintf(30, 8, "%u", result[0]);
+      lcdPrintf(59, 8, "%c", 'O');
+    }
+    else
+    {
+      lcdPrintf(59, 8, "%c", 'F');
+    }*/
 
-    chThdSleepMilliseconds(2000);
+    request++;
+
+    chThdSleepMilliseconds(5000);
     clearScreen();
   }
 
@@ -108,13 +120,13 @@ int main(void)
   chThdSleepMilliseconds(10);
 
   // LCD Thread
-  chThdCreateStatic(waThread_LCD, sizeof(waThread_LCD), NORMALPRIO, Thread_LCD, NULL);
+  //chThdCreateStatic(waThread_LCD, sizeof(waThread_LCD), NORMALPRIO, Thread_LCD, NULL);
 
   // I2C Thread
   I2CConfig i2cConfig;
   i2cStart(&I2C0, &i2cConfig);
 
-  chThdCreateStatic(waThread_I2C, sizeof(waThread_I2C), NORMALPRIO, Thread_I2C, NULL);
+  chThdCreateStatic(waThread_I2C, sizeof(waThread_I2C), HIGHPRIO, Thread_I2C, NULL);
 
   // Blocks until finish
   chThdWait(chThdSelf());
