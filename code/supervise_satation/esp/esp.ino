@@ -73,7 +73,7 @@ void reconnect() {
 
 void setup() {
   
-  Serial.begin(115200);
+  Serial.begin(9600);
 
   // WI-FI
   WiFi.mode(WIFI_STA);
@@ -101,6 +101,7 @@ void loop() {
    if (!client.connected()) {
     reconnect();
   }
+  
   client.loop();
 
   // Response request to Arduino
@@ -109,5 +110,6 @@ void loop() {
     Serial.write(hum);
     Serial.write(acc);
    }
+   
   delay(4000);
 }
