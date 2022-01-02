@@ -12,8 +12,9 @@ char msg[MSG_BUFFER_SIZE];
 const char* mqtt_server = "192.168.1.163"; // change
 
 // Wi-Fi
-const char* ssid = "ADAMO-C6CA";
-const char* password = "JA54W6HGFCV7NC";
+// Replace with your network credentials
+const char* ssid = "ssid";
+const char* password = "password";
 
 // Data
 char temp[32];

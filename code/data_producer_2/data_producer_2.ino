@@ -14,8 +14,8 @@
 #include <PubSubClient.h>
 
 // Replace with your network credentials
-const char* ssid = "ADAMO-C6CA";
-const char* password = "JA54W6HGFCV7NC";
+const char* ssid = "ssid";
+const char* password = "password";
 
 LiquidCrystal_I2C lcd(0x27,16,2);
 
@@ -23,7 +23,7 @@ ADXL345 adxl = ADXL345();
 
 // MQTT
 
-const char* mqtt_server = "192.168.1.163";
+const char* mqtt_server = "192.168.1.163"; // replace to your Broker IP
 WiFiClient espClient;
 PubSubClient client(espClient);
 

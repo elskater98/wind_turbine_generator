@@ -9,8 +9,8 @@
 #include <PubSubClient.h>
 
 // Replace with your network credentials
-const char* ssid = "ADAMO-C6CA";
-const char* password = "JA54W6HGFCV7NC";
+const char* ssid = "ssid";
+const char* password = "password";
 
 // DHT11
 #define DHTPIN 2     // Digital pin connected to the DHT sensor
@@ -23,7 +23,7 @@ float h = 0.0;
 
 // MQTT
 
-const char* mqtt_server = "192.168.1.163";
+const char* mqtt_server = "192.168.1.163"; // replace to your Broker IP
 WiFiClient espClient;
 PubSubClient client(espClient);
 

@@ -11,8 +11,8 @@
 uMQTTBroker myBroker;
 
 // Replace with your network credentials
-const char* ssid = "ADAMO-C6CA";
-const char* password = "JA54W6HGFCV7NC";
+const char* ssid = "ssid";
+const char* password = "password";
 
 // Instance of MCP23017 library
 Adafruit_MCP23017 mcp;
